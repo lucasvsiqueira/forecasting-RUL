@@ -1,113 +1,102 @@
-# Well Parameter Forecasting — Pressure & Temperature
+# Forecasting de Parâmetros de Poço — Pressão e Temperatura
 
-Forecasting models for pressure and temperature time series from offshore well sensors (Christmas tree), developed as part of the **Remaining Useful Life (RUL)** research project at **LCCV/UFAL** in partnership with **Petrobras**.
+Modelos de previsão de séries temporais de pressão e temperatura a partir de sensores de árvore de natal de poços offshore, desenvolvidos no âmbito do projeto **Vida Útil Remanescente (RUL)** do **LCCV/UFAL** em parceria com a **Petrobras**.
 
-The models were benchmarked on daily-resampled data from 6 offshore wells: LL-11, LL-22, SPH-2, SPH-6, SPH-8, SPS-77.
+Os modelos foram avaliados em dados com reamostagem diária de 6 poços offshore: LL-11, LL-22, SPH-2, SPH-6, SPH-8, SPS-77.
 
-> 📄 Related paper: **SPE-231653-MS** — presented at LACPEC 2026 (Rio de Janeiro, Brazil)
+> 📄 Artigo relacionado: **SPE-231653-MS** — apresentado no LACPEC 2026 (Rio de Janeiro, Brasil)
 
 ---
 
-## 📁 Repository Structure
-
-```
+## Estrutura do repositório
 well-forecasting/
 │
 ├── notebooks/
-│   ├── 01_pressure_linear_wave_lstm.ipynb       # Linear Regression, Wavelet & LSTM
-│   ├── 02_pressure_prophet_hybrid_catboost.ipynb # Prophet, Hybrid Prophet+LightGBM & CatBoost
-│   ├── 03_pressure_model_comparison.ipynb        # Full comparison across all pressure models
-│   └── 04_temperature_all_models.ipynb           # All 5 models applied to temperature (TPT-T)
+│   ├── 01_pressure_linear_wave_lstm.ipynb        # Regressão Linear, Wavelet e LSTM
+│   ├── 02_pressure_prophet_hybrid_catboost.ipynb  # Prophet, Híbrido Prophet+LightGBM e CatBoost
+│   ├── 03_pressure_model_comparison.ipynb         # Comparação geral dos modelos de pressão
+│   └── 04_temperature_all_models.ipynb            # Todos os modelos aplicados à temperatura (TPT-T)
 │
 └── README.md
-```
 
 ---
 
-## 🧠 Models Implemented
+## Modelos implementados
 
-| Model | Description |
+| Modelo | Descrição |
 |---|---|
-| **Linear Regression** | Baseline model using time index as feature |
-| **Wavelet (Wave)** | Savitzky-Golay smoothing + linear extrapolation |
-| **LSTM** | Recurrent neural network for sequence prediction |
-| **Prophet** | Facebook's additive time series model with seasonality |
-| **Hybrid Prophet+LightGBM** | Prophet trend/seasonality + LightGBM on residuals |
-| **CatBoost** | Gradient boosting with time and lag features |
+| **Regressão Linear** | Baseline usando índice de tempo como feature |
+| **Wavelet (Wave)** | Suavização Savitzky-Golay + extrapolação linear |
+| **LSTM** | Rede neural recorrente para previsão de sequências |
+| **Prophet** | Modelo aditivo do Facebook com sazonalidade |
+| **Híbrido Prophet+LightGBM** | Tendência/sazonalidade do Prophet + LightGBM nos resíduos |
+| **CatBoost** | Gradient boosting com features de tempo e lags |
 
 ---
 
-## 📊 Target Variables
+## Variáveis-alvo
 
-| Variable | Description | Notebooks |
+| Variável | Descrição | Notebooks |
 |---|---|---|
-| `TPT-P` | Downhole pressure (psi) | `01`, `02`, `03` |
-| `TPT-T` | Downhole temperature (°C) | `04` |
+| `TPT-P` | Pressão de fundo (psi) | `01`, `02`, `03` |
+| `TPT-T` | Temperatura de fundo (°C) | `04` |
 
 ---
 
-## ⚙️ Setup
+## Como usar
 
-All notebooks are designed to run on **Google Colab**. No local installation needed.
+Todos os notebooks rodam no **Google Colab**, sem instalação local.
 
-**Required input:** CSV files with at least two columns:
+**Entrada necessária:** arquivos CSV com pelo menos duas colunas:
 - `datetime` — timestamp
-- `TPT-P` or `TPT-T` — target parameter
+- `TPT-P` ou `TPT-T` — variável-alvo
 
-Upload your CSVs to `/content/` in Colab before running.
+Faça o upload dos CSVs para `/content/` no Colab antes de executar.
 
-**Key dependencies** (installed automatically in each notebook):
-```
-prophet==1.1.5
-lightgbm
-catboost
-PyWavelets
-tensorflow
-scikit-learn
-pandas / numpy / matplotlib
-```
+As dependências são instaladas automaticamente no início de cada notebook (`prophet`, `lightgbm`, `catboost`, `PyWavelets`, `tensorflow`, `scikit-learn`).
 
 ---
 
-## 🔑 Key Configuration Parameters
+## Parâmetros de configuração
 
-Each notebook has a `CONFIGS` section at the top where you can adjust:
+No topo de cada notebook há uma seção de configurações:
 
 ```python
-DATA_PATH      = "/content"   # folder with CSV files
-PARAMETRO_ALVO = "TPT-P"      # target column
-TRAIN_SPLIT    = 0.9          # 90% train / 10% test
-TEST_MIN_STEPS = 200          # minimum test points
+DATA_PATH      = "/content"   # pasta com os CSVs
+PARAMETRO_ALVO = "TPT-P"      # coluna alvo
+TRAIN_SPLIT    = 0.9          # 90% treino / 10% teste
+TEST_MIN_STEPS = 200          # mínimo de pontos no teste
 RESAMPLE       = True
-FREQUENCIA     = "D"          # daily resampling
+FREQUENCIA     = "D"          # reamostagem diária
 ```
 
 ---
 
-## 📈 Results (Pressure — SPE-231653-MS)
+## Resultados (Pressão — SPE-231653-MS)
 
-Average metrics across 6 wells:
+Médias das métricas nos 6 poços:
 
-| Model | MAE | MAPE (%) |
+| Modelo | MAE | MAPE (%) |
 |---|---|---|
-| Linear | — | — |
-| Wave | — | — |
-| Prophet | — | — |
-| CatBoost | — | — |
-| **Hybrid Prophet+LightGBM** | **25.62** | **9.56** |
-
-> ✅ Best performer: Hybrid Prophet+LightGBM
+| Linear | 36,2 | 16,48 |
+| Wave | 36,85 | 16,87 |
+| Prophet | 42,97 | 19,61 |
+| CatBoost | 30,58 | 12,82 |
+| **Híbrido Prophet+LightGBM** | **25,62** | **9,56** |
 
 ---
 
-## 🔭 Next Steps
+## Próximos passos (sugestões)
 
-- Integrate forecasts with corrosion models (e.g. NORSOK M-506) to compute actual **RUL** via time-dependent safety factors
-- Extend to **multivariate modeling** (pressure + temperature + flow rate jointly)
-- Explore **uncertainty quantification** and deep learning architectures (Informer, Transformers)
+- Testar possíveis novos modelos de previsão visando a melhora dos parâmetros e métricas, e melhorar filtragem de dados dos poços
+- Modelagem multivariada (pressão + temperatura em conjunto)
+- Integrar as previsões com modelos de corrosão (ex: NORSOK M-506) para calcular o RUL via fator de segurança ao longo do tempo
+- Quantificação de incerteza e arquiteturas de deep learning (Informer, Transformers)
 
 ---
 
-## 👥 Authors
+## Autores
 
-Developed at **LCCV/UFAL** (Laboratory of Scientific Computing and Visualization, Federal University of Alagoas) in collaboration with **Petrobras**.
+Lucas Veras de Siqueira com auxílio de Lucas Gouveia Omena Lopes
+
+Desenvolvido no **LCCV/UFAL** (Laboratório de Computação Científica e Visualização, Universidade Federal de Alagoas) em colaboração com a **Petrobras**.
